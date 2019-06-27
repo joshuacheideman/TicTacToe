@@ -1,0 +1,14 @@
+
+.Grid-main{
+    display: flex;
+    justify-content: center;
+}
+.Grid-table{
+    flex: 1;
+    border-collapse : collapse;
+    width: 60%;
+    height: 300px;
+}
+table,td{
+    border: 5px solid black;
+}
