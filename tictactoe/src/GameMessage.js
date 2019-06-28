@@ -1,4 +1,5 @@
 import React from 'react';
+import "./GameMessage.css";
 
 class GameMessage extends React.Component{
     
@@ -27,7 +28,7 @@ class GameMessage extends React.Component{
             }
         }
         return(
-            <div>
+            <div className="gameMessage">
                 {message}
                 {retry}
             </div>

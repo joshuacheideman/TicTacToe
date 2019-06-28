@@ -142,7 +142,10 @@ class Grid extends React.Component{
                 {this.makeGrid()}
             </tbody>
         </table>
-        <GameMessage gameEnded={this.state.gameEnded} gameCondition={this.state.gameCondition} reset = {this.reset}></GameMessage>
+        <GameMessage 
+            gameEnded={this.state.gameEnded} 
+            gameCondition={this.state.gameCondition} 
+            reset = {this.reset}></GameMessage>
     </main>
         )
     };
