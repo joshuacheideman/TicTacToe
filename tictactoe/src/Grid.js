@@ -1,6 +1,7 @@
 import React from 'react';
 import './Grid.css';
 import Cell from "./Cell.js";
+import GameMessage from "./GameMessage.js"
 
 class Grid extends React.Component{
     constructor(props)
@@ -9,7 +10,8 @@ class Grid extends React.Component{
         this.state = {
             symbols: new Array(9),
             isX: true,
-            gameEnded: false
+            gameEnded: false,
+            gameCondition: undefined
         };
 
         //bind to the component so state is not null in function
@@ -17,7 +19,7 @@ class Grid extends React.Component{
     }
 
     //This function programatically makes the table for us instead of hard coding it
-    makeTable()
+    makeGrid()
     {
         let table = [];
         let counter = 0;
@@ -28,7 +30,7 @@ class Grid extends React.Component{
 
             for(let j=0;j<3;j++)
             {
-                children.push(<Cell symbol= {this.state.symbols[counter]} setSymbol={this.setSymbol} key = {"Cell-"+counter} position= {counter}></Cell>);
+                children.push(<Cell symbol= {this.state.symbols[counter]} setSymbol={this.setSymbol} key = {"Cell-"+counter} position= {counter} gameEnded= {this.state.gameEnded}></Cell>);
                 counter++;
             }
             //combine all children elements with the parent elements
@@ -50,26 +52,11 @@ class Grid extends React.Component{
         curState = !curState;
         this.setState((state)=> ({symbols: symbols,isX: curState}));
         let DidWin = this.gameEnd(symbols,curState);
-        console.log(this.state.symbols);
-        console.log(this.state.isX);
-        switch(DidWin)
-            {
-                case 0:
-                    console.log("You lost");
-                    break;
-                case 1:
-                    console.log("You tied");
-                    break;
-                case 2:
-                    console.log("You Won");
-                    break; 
-                default:
-                    console.log("Continue with the game");
-                    return;
-            }
-        
+        if(DidWin!==undefined)
+        {
+            this.setState({gameEnded: true,gameCondition:DidWin});
+        }
     }
-
     //check to see if you won,lost,or tied
     //Lost = 0, Tied = 1, Won = 2
     gameEnd(symbols,latestMove)
@@ -103,7 +90,7 @@ class Grid extends React.Component{
                 }
                 else
                     noSpaces = false
-                    
+
                 if(symbols[i+3*j]!==undefined)
                 {
                     verticals += symbols[i+3*j];
@@ -153,9 +140,10 @@ class Grid extends React.Component{
     <main className="Grid-main">
         <table className="Grid-table">
             <tbody>
-                {this.makeTable()}
+                {this.makeGrid()}
             </tbody>
         </table>
+        <GameMessage gameEnded={this.state.gameEnded} gameCondition={this.state.gameCondition}></GameMessage>
     </main>
         )
     };
