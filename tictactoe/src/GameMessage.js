@@ -5,25 +5,32 @@ class GameMessage extends React.Component{
     render()
     {
         let message;
+        let retry;
         if(this.props.gameEnded===true)
         {
+            retry = <button onClick={this.props.reset}>Reset</button>;
             switch(this.props.gameCondition)
             {
                 case 0:
-                    message = "You lost.";
+                    message = <h2>You lost.</h2>;
                     break;
                 case 1:
-                    message = "You tied.";
+                    message = <h2>You tied.</h2>;
                     break;
                 case 2:
-                    message = ("You Won."); 
+                    message = <h2>You Won.</h2>; 
                     break;
                 default:
                     message = "";
+                    retry = "";
+
             }
         }
         return(
-            <h2>{message}</h2>
+            <div>
+                {message}
+                {retry}
+            </div>
         )
     }
 }

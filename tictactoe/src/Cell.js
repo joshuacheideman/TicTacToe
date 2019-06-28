@@ -7,14 +7,10 @@ class Cell extends React.Component{
         let symbol = this.props.symbol;
         let cell= [];
         let position = this.props.position;
-        if(symbol===undefined)
+        if(symbol===undefined&&!this.props.gameEnded)
         {
-            if(!this.props.gameEnded)
                 cell =<td className="clickable" onClick={this.props.setSymbol.bind(this,position)}></td>
-            else
-                cell =<td></td>
         }
-
         else
             cell = <td>{symbol}</td>
         return(    
