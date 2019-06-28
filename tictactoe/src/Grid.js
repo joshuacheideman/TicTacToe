@@ -8,10 +8,11 @@ class Grid extends React.Component{
         super(props);
         this.state = {
             symbols: new Array(9),
-            isX: true
+            isX: true,
+            gameEnded: false
         };
 
-        //bind to the component so state is not null
+        //bind to the component so state is not null in function
         this.setSymbol = this.setSymbol.bind(this);
     }
 
@@ -40,12 +41,111 @@ class Grid extends React.Component{
     setSymbol(cellId,e)
     {
         let symbols = this.state.symbols;
-        console.log(symbols);
-        if(this.state.isX===true)
+        let curState = this.state.isX;
+        if(curState===true)
             symbols[cellId] = "X";
         else
             symbols[cellId] = "O";
-        this.setState((state)=> ({symbols: symbols,isX: !state.isX}));
+        
+        curState = !curState;
+        this.setState((state)=> ({symbols: symbols,isX: curState}));
+        let DidWin = this.gameEnd(symbols,curState);
+        console.log(this.state.symbols);
+        console.log(this.state.isX);
+        switch(DidWin)
+            {
+                case 0:
+                    console.log("You lost");
+                    break;
+                case 1:
+                    console.log("You tied");
+                    break;
+                case 2:
+                    console.log("You Won");
+                    break; 
+                default:
+                    console.log("Continue with the game");
+                    return;
+            }
+        
+    }
+
+    //check to see if you won,lost,or tied
+    //Lost = 0, Tied = 1, Won = 2
+    gameEnd(symbols,latestMove)
+    {
+        let diagonal1 = "";
+        let diagonal2 = "";
+        let noSpaces = true;
+        for(let i=0;i<3;i++)
+        {
+            if(symbols[4*i]!==undefined)
+            {
+                diagonal1 += symbols[4*i];
+            }
+            else
+                noSpaces = false;
+            if(symbols[2*i]!==undefined)
+            {
+                diagonal2 += symbols[2*i];
+            }
+            else
+                noSpaces = false;
+
+            let horizontals = "";
+            let verticals = "";
+            for(let j=0;j<3;j++)
+            {
+                //horizontals
+                if(symbols[3*i+j]!==undefined)
+                {
+                    horizontals += symbols[3*i+j];
+                }
+                else
+                    noSpaces = false
+                    
+                if(symbols[i+3*j]!==undefined)
+                {
+                    verticals += symbols[i+3*j];
+                }
+                else
+                    noSpaces = false;
+            }
+            //check to see if horizontals,verticals, and diagonals have 3 in a row
+            let horizontalV = this.validateWin(horizontals,latestMove);
+            let verticalV = this.validateWin(verticals,latestMove);
+            if(horizontalV!==undefined)
+                return horizontalV;
+            if(verticalV !==undefined)
+                return verticalV;
+        }
+        let diagonalV1 = this.validateWin(diagonal1,latestMove);
+        let diagonalV2 = this.validateWin(diagonal2,latestMove);
+        if(diagonalV1 !==undefined)
+            return diagonalV1;
+        if(diagonalV2 !==undefined)
+            return diagonalV2;
+
+        if(noSpaces)
+        {
+            return 1;
+        }
+        return;
+    }
+
+    validateWin(direction,latestMove)
+    {
+        if(direction==="XXX"||direction==="OOO")
+            {
+                //Win if not your turn
+                if(!latestMove)
+                {
+                    return 2;
+                }
+                //Loss if it is your turn
+                else
+                    return 0;
+            }
     }
     render()
     {
