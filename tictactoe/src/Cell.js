@@ -11,8 +11,17 @@ class Cell extends React.Component{
         {
                 cell =<td className="clickable" onClick={this.props.setSymbol.bind(this,position)}></td>
         }
-        else
-            cell = <td>{symbol}</td>
+        else switch(symbol)
+        {
+            case "X":
+                cell = <td style={{color:'blue'}}>X</td>
+                break;
+            case "O":
+                cell = <td style={{color:'red'}}>O</td>
+                break;
+            default:
+                cell = <td>{symbol}</td>;
+        }
         return(    
             cell
         ) 

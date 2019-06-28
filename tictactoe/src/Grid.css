@@ -10,7 +10,7 @@
     border-collapse : collapse;
     width: 60%;
 }
-table,td{
+td{
     border: 5px solid black;
 }
 .gameMessage{

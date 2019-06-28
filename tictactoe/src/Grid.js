@@ -9,7 +9,8 @@ class Grid extends React.Component{
         super(props);
         this.state = {
             symbols: new Array(9),
-            isX: true,
+            xsTurn: this.props.firstTurn,
+            selectedX : this.props.playerX,
             gameEnded: false,
             gameCondition: undefined
         };
@@ -50,14 +51,14 @@ class Grid extends React.Component{
     setSymbol(cellId,e)
     {
         let symbols = this.state.symbols;
-        let curState = this.state.isX;
+        let curState = this.state.xsTurn;
         if(curState===true)
             symbols[cellId] = "X";
         else
             symbols[cellId] = "O";
         
         curState = !curState;
-        this.setState((state)=> ({symbols: symbols,isX: curState}));
+        this.setState((state)=> ({symbols: symbols,xsTurn: curState}));
         let DidWin = this.gameEnd(symbols,curState);
         
         //if we won end, the game and put the code in for game end state 
@@ -65,6 +66,7 @@ class Grid extends React.Component{
         {
             this.setState({gameEnded: true,gameCondition:DidWin});
         }
+        
     }
     //check to see if you won,lost,or tied
     //Lost = 0, Tied = 1, Won = 2
@@ -114,8 +116,9 @@ class Grid extends React.Component{
     {
         if(direction==="XXX"||direction==="OOO")
             {
+
                 //Win if not your turn
-                if(!latestMove)
+                if((!latestMove && this.state.selectedX)||(latestMove && !this.state.selectedX))
                 {
                     return 2;
                 }
@@ -128,7 +131,7 @@ class Grid extends React.Component{
     {
         this.setState({
             symbols: new Array(9),
-            isX: true,
+            xsTurn: true,
             gameEnded: false,
             gameCondition: undefined
         });
