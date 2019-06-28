@@ -4,9 +4,6 @@ td{
     height: 100px;
     width: 20%;
 }
-button{
-    width:100%;
-    height:100%;
+.clickable{
     cursor: pointer;
-    background:transparent;
 }

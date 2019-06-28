@@ -7,14 +7,15 @@ class Grid extends React.Component{
     {
         super(props);
         this.state = {
-            symbols: new Array(9)
+            symbols: new Array(9),
+            isX: true
         };
+        this.setSymbol = this.setSymbol.bind(this);
     }
     makeTable()
     {
         let table = [];
         let counter = 0;
-        
         for(let i=0;i<3;i++)
         {
             //inner loop to create children elements
@@ -22,19 +23,28 @@ class Grid extends React.Component{
 
             for(let j=0;j<3;j++)
             {
-                children.push(<Cell symbol= {this.state.symbols[{counter}]} setSymbol={this.setSymbol} key = {"Cell-"+counter} position= {counter}></Cell>);
+                children.push(<Cell symbol= {this.state.symbols[counter]} setSymbol={this.setSymbol} key = {"Cell-"+counter} position= {counter}></Cell>);
                 counter++;
             }
+            console.log(children);
             table.push(<tr key={"tr-"+i}>{children}</tr>);
         }
         return table;
     }
     setSymbol(cellId,e)
     {
-        console.log(cellId);
+        let symbols = this.state.symbols;
+        console.log(symbols);
+        if(this.state.isX===true)
+            symbols[cellId] = "X";
+        else
+            symbols[cellId] = "O";
+        this.setState((state)=> ({symbols: symbols,isX: !state.isX}));
+        console.log(this.state.symbols);
     }
     render()
     {
+        console.log("rendering");
         return (
     <main className="Grid-main">
         <table className="Grid-table">

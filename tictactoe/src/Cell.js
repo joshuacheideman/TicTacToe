@@ -4,12 +4,13 @@ import "./Cell.css";
 class Cell extends React.Component{
     render()
     {
-        const symbol = this.props.symbol;
-        let cell;
+        let symbol = this.props.symbol;
+        let cell= [];
         let position = this.props.position;
+        console.log(symbol);
         if(symbol===undefined)
         {
-            cell=<td><button onClick={this.props.setSymbol.bind(this,position)}></button></td>
+            cell =<td className="clickable" onClick={this.props.setSymbol.bind(this,position)}></td>
         }
         else
             cell = <td>{symbol}</td>
