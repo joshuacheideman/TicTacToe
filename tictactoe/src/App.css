@@ -1,0 +1,27 @@
+.X{
+    color:blue;
+}
+.O{
+    color:red;
+}
+.X .O{
+    font-family: 'Raleway', sans-serif;
+}
+
+.selectPiece{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}
+.buttonRow{
+    display: flex;
+    width: 10%;
+    justify-content: space-around;
+    justify-items: stretch;
+}
+.selectButton{
+    background-color: white;
+    font-size: 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}

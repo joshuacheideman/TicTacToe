@@ -11,10 +11,11 @@ class Cell extends React.Component{
         const adjustedwidth = (60/size)+"%";
         const adjustedheight = (300/size)+"px";
         const adjustedfontSize = Math.floor(250/size)+"px";
+        const adjustedCellStyle= {width:adjustedwidth,height:adjustedheight,fontSize:adjustedfontSize};
 
         if(symbol===undefined&&!this.props.gameEnded)
         {
-                cell =<td style={{width:adjustedwidth,height:adjustedheight,fontSize:adjustedfontSize}} 
+                cell =<td style={adjustedCellStyle} 
                     className="clickable" 
                     onClick={this.props.setSymbol.bind(this,position)}>
                     </td>
@@ -22,13 +23,13 @@ class Cell extends React.Component{
         else switch(symbol)
         {
             case "X":
-                cell = <td style={{color:'blue', width:adjustedwidth,height:adjustedheight,fontSize:adjustedfontSize}}>X</td>
+                cell = <td className="X" style={adjustedCellStyle}>X</td>
                 break;
             case "O":
-                cell = <td style={{color:'red',width:adjustedwidth,height:adjustedheight,fontSize:adjustedfontSize}}>O</td>
+                cell = <td className="O" style={adjustedCellStyle}>O</td>
                 break;
             default:
-                cell = <td style={{width:adjustedwidth,height:adjustedheight,fontSize:adjustedfontSize}}>{symbol}</td>;
+                cell = <td style={adjustedCellStyle}>{symbol}</td>;
         }
         return(    
             cell
