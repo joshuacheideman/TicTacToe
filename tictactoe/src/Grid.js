@@ -87,8 +87,12 @@ class Grid extends React.Component{
     {
         if((this.state.AI&&(!curX&&this.state.selectedX))||(this.state.AI&&(curX&&!this.state.selectedX)))
         {
-            if(this.size!==3)
+           if(this.state.size!==3)
                 [symbols,curX] = this.randomAI(symbols,curX);
+            else
+            {
+                [symbols,curX] = this.advancedAI(symbols,curX);
+            }
         }
         this.setState({symbols: symbols,xsTurn: curX});
         this.DidWin(symbols,curX,this.state.selectedX,this.state.size);
@@ -96,20 +100,80 @@ class Grid extends React.Component{
     }
     randomAI(symbols,curX)
     {
-        let choices = {};
-            let numChoices = 0;
-            for(let i=0;i<Math.pow(this.state.size,2);i++)
+        let choices;
+        choices = this.getRemainingTiles(symbols);
+        let random = Math.floor(Math.random()*choices.size);
+        symbols[choices.get(random).key] = (curX) ? "X": "O";
+        curX = !curX;
+        return [symbols,curX];
+    }
+    getRemainingTiles(symbols)
+    {
+        let choices = new Map();
+        for(let i=0;i<Math.pow(this.state.size,2);i++)
+        {
+            if(symbols[i]!=='X'&&symbols[i]!=='O')
             {
-                if(symbols[i]!=='X'&&symbols[i]!=='O')
-                {
-                    choices[numChoices]={key:i};
-                    ++numChoices;
-                }
+                choices.set(choices.size,{key:i});
             }
-            let random = Math.floor(Math.random()*numChoices);
-            symbols[choices[random].key] = (curX) ? "X": "O";
-            curX = !curX;
-            return [symbols,curX];
+        }
+        return choices;
+    }
+    advancedAI(symbols,curX)
+    {
+        let node = {};
+        let choices = {};
+        choices = this.getRemainingTiles(symbols);
+        node.children = choices;
+        let value;
+        let max = -Infinity;
+        let choosenTile; 
+        for (let child of node.children)
+        {
+            value = this.minimax(child[1],choices.size-1,false,symbols,curX);
+            if(value>=max)
+            {
+                max = value;
+                choosenTile = child[1];
+            }
+        }
+        //console.log(value);
+        symbols[choosenTile.key] = (curX) ? "X": "O";
+        curX = !curX;
+        return [symbols,curX];
+    }
+    minimax(curNode,depth,maxPlayer,symbols,curX)
+    {
+        symbols[curNode.key] = ((maxPlayer&&this.state.selectedX)||(!maxPlayer&&!this.state.selectedX)) ? "O" : "X";
+        
+        //check if depth is 0 or if some ending condition occurred return heuristic
+        let heuristic = CheckWin.gameEnd(symbols,curX,this.state.selectedX,this.state.size);
+        if(heuristic!==undefined)
+        {
+            symbols[curNode.key]=undefined;
+            return heuristic;
+        }
+        let node = {};
+        let choices = {};
+        choices = this.getRemainingTiles(symbols);
+        node.children = choices;
+        let value;
+        if(maxPlayer)
+        {
+            value = -Infinity;
+            for (let child of node.children)
+            {
+                value = Math.max(value,this.minimax(child[1],depth-1,false,symbols,!curX))
+            }
+        }else{
+            value = Infinity;
+            for (let child of node.children)
+            {
+                value = Math.min(value,this.minimax(child[1],depth-1,true,symbols,!curX))
+            }
+        }
+        symbols[curNode.key]=undefined;
+        return value;
     }
     resetGrid()
     {

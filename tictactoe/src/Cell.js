@@ -12,7 +12,6 @@ class Cell extends React.Component{
         const adjustedheight = (300/size)+"px";
         const adjustedfontSize = Math.floor(250/size)+"px";
         const adjustedCellStyle= {width:adjustedwidth,height:adjustedheight,fontSize:adjustedfontSize};
-
         if(symbol===undefined&&!this.props.gameEnded)
         {
                 cell =<td style={adjustedCellStyle} 

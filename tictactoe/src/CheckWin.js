@@ -40,8 +40,8 @@
                 return diagonalV2;
             
             //check for tie
-            if(symbols.filter(symbol => (symbol!=='X'||symbol!=='O')).length===Math.pow(size,2))
-                return 1;
+            if(symbols.filter(symbol => (symbol==='X'||symbol==='O')).length===Math.pow(size,2))
+                return 10;
         }
 
         //check to see if the we have three in a row
@@ -53,7 +53,7 @@
                     //Win if not your turn
                     if((!latestMove && selectedX)||(latestMove && !selectedX))
                     {
-                        return 2;
+                        return 20;
                     }
                     //Loss if it is your turn
                     else

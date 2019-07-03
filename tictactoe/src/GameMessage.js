@@ -15,10 +15,10 @@ class GameMessage extends React.Component{
                 case 0:
                     message = <h2>You lost.</h2>;
                     break;
-                case 1:
+                case 10:
                     message = <h2>You tied.</h2>;
                     break;
-                case 2:
+                case 20:
                     message = <h2>You Won.</h2>; 
                     break;
                 default:
