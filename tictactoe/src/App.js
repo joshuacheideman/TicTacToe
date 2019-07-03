@@ -34,7 +34,7 @@ class App extends React.Component
 
         if(this.state.selectedSize)
         {
-            grid = <Grid playerX={true} boardSize={3}></Grid>; 
+            grid = <Grid playerX={this.state.playerX} boardSize={3}></Grid>; 
         }
         return(
             <div>
