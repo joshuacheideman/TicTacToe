@@ -9,7 +9,7 @@ class GameMessage extends React.Component{
         let retry;
         if(this.props.gameEnded===true)
         {
-            retry = <button className="retry" onClick={this.props.reset}><span>Reset</span></button>;
+            retry = <button className="retry" onClick={this.props.resetGrid}><span>Reset</span></button>;
             switch(this.props.gameCondition)
             {
                 case 0:
