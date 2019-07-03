@@ -125,19 +125,18 @@ class Grid extends React.Component{
         let choices = {};
         choices = this.getRemainingTiles(symbols);
         node.children = choices;
-        let value;
+        let value= -Infinity;
         let max = -Infinity;
         let choosenTile; 
         for (let child of node.children)
         {
-            value = this.minimax(child[1],choices.size-1,false,symbols,curX);
-            if(value>=max)
+            value = Math.max(value,this.minimax(child[1],choices.size-1,false,symbols,curX));
+            if(value>max)
             {
                 max = value;
                 choosenTile = child[1];
             }
         }
-        //console.log(value);
         symbols[choosenTile.key] = (curX) ? "X": "O";
         curX = !curX;
         return [symbols,curX];
@@ -151,6 +150,10 @@ class Grid extends React.Component{
         if(heuristic!==undefined)
         {
             symbols[curNode.key]=undefined;
+
+            //adding this to heuristic makes it so defence counters you more
+            if(!maxPlayer&&heuristic===20)
+                return heuristic+depth;
             return heuristic;
         }
         let node = {};
