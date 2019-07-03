@@ -9,6 +9,7 @@
     flex: 1;
     border-collapse : collapse;
     width: 60%;
+    height:300px;
 }
 td{
     border: 5px solid black;

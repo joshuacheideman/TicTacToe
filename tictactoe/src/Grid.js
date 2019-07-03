@@ -9,13 +9,13 @@ class Grid extends React.Component{
     {
         super(props);
         this.state = {
-            symbols: new Array(9),
-            xsTurn: this.props.firstTurn,
+            size: this.props.boardSize,
+            symbols: new Array(Math.pow(this.props.boardSize,2)),
+            xsTurn: Math.floor(Math.random()*2)===0?false: true,
             selectedX : this.props.playerX,
             gameEnded: false,
             gameCondition: undefined
         };
-
         //bind to the component so state is not null in function
         this.setSymbol = this.setSymbol.bind(this);
         this.resetGrid = this.resetGrid.bind(this);
@@ -26,19 +26,21 @@ class Grid extends React.Component{
     {
         let table = [];
         let counter = 0;
-        for(let i=0;i<3;i++)
+        for(let i=0;i<this.state.size;i++)
         {
             //inner loop to create children elements
             let children = [];
 
-            for(let j=0;j<3;j++)
+            for(let j=0;j<this.state.size;j++)
             {
                 children.push(<Cell 
                     key = {"Cell-"+counter} 
                     symbol= {this.state.symbols[counter]} 
                     setSymbol={this.setSymbol} 
                     position= {counter} 
-                    gameEnded= {this.state.gameEnded}>
+                    gameEnded= {this.state.gameEnded}
+                    size = {this.state.size}
+                    >
                 </Cell>)
                 counter++;
             }
@@ -60,7 +62,7 @@ class Grid extends React.Component{
         
         curState = !curState;
         this.setState((state)=> ({symbols: symbols,xsTurn: curState}));
-        let DidWin = CheckWin.gameEnd(symbols,curState,this.state.selectedX);
+        let DidWin = CheckWin.gameEnd(symbols,curState,this.state.selectedX,this.state.size);
         //if we won end, the game and put the code in for game end state 
         if(DidWin!==undefined)
         {
@@ -71,8 +73,8 @@ class Grid extends React.Component{
     resetGrid()
     {
         this.setState({
-            symbols: new Array(9),
-            xsTurn: true,
+            symbols: new Array(this.state.size),
+            xsTurn: Math.floor(Math.random()*2)===0?false: true,
             gameEnded: false,
             gameCondition: undefined
         });

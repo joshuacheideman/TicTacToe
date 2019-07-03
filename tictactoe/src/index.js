@@ -5,7 +5,9 @@ import Grid from './Grid.js';
 import * as serviceWorker from './serviceWorker';
 
 //randomly select the turn order
-const turnOrder= Math.floor(Math.random()*2)===0?false: true;
-ReactDOM.render(<Grid firstTurn={turnOrder} playerX={true}></Grid>, document.getElementById('root'));
+//board size is good when going from 1 to 20
+//1 250px
+
+ReactDOM.render(<Grid playerX={true} boardSize={3}></Grid>, document.getElementById('root'));
 
 serviceWorker.unregister();
