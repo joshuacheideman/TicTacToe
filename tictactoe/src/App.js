@@ -24,7 +24,7 @@ class App extends React.Component
         return;
     }
     render(){
-        //board size is good when going from 1 to 20
+        //board size is good when going from 1 to 15
         let grid = null;
         const SelectX = <button onClick={this.setPiece.bind(this,"X")}className="selectButton"><span className="X">X</span></button>;
         const SelectO = <button onClick={this.setPiece.bind(this,"O")}className="selectButton"><span className="O">O</span></button>;
@@ -37,7 +37,7 @@ class App extends React.Component
             grid = <Grid playerX={this.state.playerX} boardSize={3} AI={true}></Grid>; 
         }
         return(
-            <div>
+            <div className="App-Main">
                 {grid}
             </div>
         )
