@@ -9,7 +9,9 @@ class AI
         if((!curX&&playerX)||(curX&&!playerX))
         {
            if(size!==3)
+           {
                 [symbols,curX] = this.randomAI(symbols,curX,size);
+           }
             else
             {
                 [symbols,curX] = this.advancedAI(symbols,curX,size,playerX);

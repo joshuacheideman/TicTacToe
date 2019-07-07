@@ -22,8 +22,8 @@ class Grid extends React.Component{
 
         //bind to the component so state is not null in function
         this.setSymbol = this.setSymbol.bind(this);
-        this.resetGrid = this.resetGrid.bind(this);
         Grid.switchPlayer = Grid.switchPlayer.bind(this);
+        Grid.resetGrid = Grid.resetGrid.bind(this);
     }
     componentDidMount()
     {
@@ -82,9 +82,9 @@ class Grid extends React.Component{
         }
     }
     
-    resetGrid()
+    static resetGrid()
     {
-        let symbols = new Array(this.props.boardSize);
+        let symbols = new Array(Math.pow(this.props.boardSize,2));
         this.setState({
             symbols: symbols,
             gameEnded: false
@@ -117,7 +117,7 @@ class Grid extends React.Component{
         <GameMessage 
             gameEnded={this.state.gameEnded} 
             gameCondition={this.gameCondition} 
-            resetGrid = {this.resetGrid}></GameMessage>
+            resetGrid = {Grid.resetGrid}></GameMessage>
     </main>
         )
     };
