@@ -3,6 +3,7 @@ import './Grid.css';
 import Cell from "./Cell.js";
 import GameMessage from "./GameMessage.js"
 import CheckWin from "./CheckWin.js";
+import AI from "./AI.js";
 
 class Grid extends React.Component{
     constructor(props)
@@ -22,10 +23,12 @@ class Grid extends React.Component{
         //bind to the component so state is not null in function
         this.setSymbol = this.setSymbol.bind(this);
         this.resetGrid = this.resetGrid.bind(this);
+        Grid.switchPlayer = Grid.switchPlayer.bind(this);
+        Grid.DidWin = Grid.DidWin.bind(this);
     }
     componentDidMount()
     {
-        this.playerAI(this.state.symbols,this.xsTurn);
+        AI.playerAI(this.state.symbols,this.xsTurn,this.props.boardSize,this.props.playerX);
     }
     //This function programatically makes the table for us instead of hard coding it
     makeGrid()
@@ -69,13 +72,13 @@ class Grid extends React.Component{
         curX = !curX;
         this.xsTurn = curX;
         this.setState(({symbols: symbols}));
-        let won = this.DidWin(symbols,curX,this.props.playerX,this.props.boardSize);
+        let won = Grid.DidWin(symbols,curX,this.props.playerX,this.props.boardSize);
         
         if(won===undefined)
-            this.playerAI(symbols,curX);
+            AI.playerAI(symbols,curX,this.props.boardSize,this.props.playerX);
         
     }
-    DidWin(symbols,curX,selectedX,size)
+    static DidWin(symbols,curX,selectedX,size)
     {
         let DidWin = CheckWin.gameEnd(symbols,curX,selectedX,size);
         //if we won end, the game and put the code in for game end state 
@@ -87,102 +90,6 @@ class Grid extends React.Component{
         return DidWin;
     }
     
-    playerAI(symbols,curX)
-    {
-        if((!curX&&this.props.playerX)||(curX&&!this.props.playerX))
-        {
-           if(this.props.boardSize!==3)
-                [symbols,curX] = this.randomAI(symbols,curX);
-            else
-            {
-                [symbols,curX] = this.advancedAI(symbols,curX);
-            }
-        }
-        this.setState({symbols: symbols});
-        this.xsTurn = curX;
-        this.DidWin(symbols,curX,this.props.playerX,this.props.boardSize);
-        return;
-    }
-    randomAI(symbols,curX)
-    {
-        let choices;
-        choices = this.getRemainingTiles(symbols);
-        let random = Math.floor(Math.random()*choices.size);
-        symbols[choices.get(random).key] = (curX) ? "X": "O";
-        curX = !curX;
-        return [symbols,curX];
-    }
-    getRemainingTiles(symbols)
-    {
-        let choices = new Map();
-        for(let i=0;i<Math.pow(this.props.boardSize,2);i++)
-        {
-            if(symbols[i]!=='X'&&symbols[i]!=='O')
-            {
-                choices.set(choices.size,{key:i});
-            }
-        }
-        return choices;
-    }
-    advancedAI(symbols,curX)
-    {
-        let node = {};
-        let choices = {};
-        choices = this.getRemainingTiles(symbols);
-        node.children = choices;
-        let value= -Infinity;
-        let max = -Infinity;
-        let choosenTile; 
-        for (let child of node.children)
-        {
-            value = Math.max(value,this.minimax(child[1],choices.size-1,false,symbols,curX));
-            if(value>max)
-            {
-                max = value;
-                choosenTile = child[1];
-            }
-        }
-        symbols[choosenTile.key] = (curX) ? "X": "O";
-        curX = !curX;
-        return [symbols,curX];
-    }
-    minimax(curNode,depth,maxPlayer,symbols,curX)
-    {
-        symbols[curNode.key] = ((maxPlayer&&this.props.playerX)||(!maxPlayer&&!this.props.playerX)) ? "O" : "X";
-        
-        //check if depth is 0 or if some ending condition occurred return heuristic
-        let heuristic = CheckWin.gameEnd(symbols,curX,this.props.playerX,this.props.boardSize);
-        if(heuristic!==undefined)
-        {
-            symbols[curNode.key]=undefined;
-
-            //adding this to heuristic makes it so defence counters you more
-            if(!maxPlayer&&heuristic===20)
-                return heuristic+depth;
-            return heuristic;
-        }
-        let node = {};
-        let choices = {};
-        choices = this.getRemainingTiles(symbols);
-        node.children = choices;
-        let value;
-        if(maxPlayer)
-        {
-            value = -Infinity;
-            for (let child of node.children)
-            {
-                value = Math.max(value,this.minimax(child[1],depth-1,false,symbols,!curX))
-            }
-        }else{
-            value = Infinity;
-            for (let child of node.children)
-            {
-                value = Math.min(value,this.minimax(child[1],depth-1,true,symbols,!curX))
-            }
-        }
-        symbols[curNode.key]=undefined;
-        return value;
-    }
     resetGrid()
     {
         let symbols = new Array(this.props.boardSize);
@@ -192,7 +99,12 @@ class Grid extends React.Component{
         });
         this.gameCondition = undefined;
         this.xsTurn = Math.floor(Math.random()*2)===0?false: true;
-        this.playerAI(symbols,this.xsTurn);
+        AI.playerAI(symbols,this.xsTurn,this.props.boardSize,this.props.playerX);
+    }
+    static switchPlayer(symbols,curX)
+    {
+        this.setState({symbols:symbols});
+        this.xsTurn = curX;
     }
     render()
     {
