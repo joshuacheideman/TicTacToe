@@ -24,7 +24,6 @@ class Grid extends React.Component{
         this.setSymbol = this.setSymbol.bind(this);
         this.resetGrid = this.resetGrid.bind(this);
         Grid.switchPlayer = Grid.switchPlayer.bind(this);
-        Grid.DidWin = Grid.DidWin.bind(this);
     }
     componentDidMount()
     {
@@ -72,22 +71,15 @@ class Grid extends React.Component{
         curX = !curX;
         this.xsTurn = curX;
         this.setState(({symbols: symbols}));
-        let won = Grid.DidWin(symbols,curX,this.props.playerX,this.props.boardSize);
+        let won = CheckWin.DidWin(symbols,curX,this.props.playerX,this.props.boardSize);
         
         if(won===undefined)
             AI.playerAI(symbols,curX,this.props.boardSize,this.props.playerX);
-        
-    }
-    static DidWin(symbols,curX,selectedX,size)
-    {
-        let DidWin = CheckWin.gameEnd(symbols,curX,selectedX,size);
-        //if we won end, the game and put the code in for game end state 
-        if(DidWin!==undefined)
+        else
         {
-            this.setState({gameEnded: true});
-            this.gameCondition = DidWin;
+            this.gameCondition = won;
+            this.setState({gameEnded:true});
         }
-        return DidWin;
     }
     
     resetGrid()
@@ -101,10 +93,16 @@ class Grid extends React.Component{
         this.xsTurn = Math.floor(Math.random()*2)===0?false: true;
         AI.playerAI(symbols,this.xsTurn,this.props.boardSize,this.props.playerX);
     }
-    static switchPlayer(symbols,curX)
+    static switchPlayer(symbols,curX,won)
     {
         this.setState({symbols:symbols});
         this.xsTurn = curX;
+        
+        if(won!==undefined)
+        {
+            this.gameCondition = won;
+            this.setState({gameEnded:true});
+        }
     }
     render()
     {

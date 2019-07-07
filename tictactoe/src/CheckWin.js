@@ -42,6 +42,8 @@
             //check for tie
             if(symbols.filter(symbol => (symbol==='X'||symbol==='O')).length===Math.pow(size,2))
                 return 10;
+                
+            return undefined;
         }
 
         //check to see if the we have three in a row
@@ -61,6 +63,12 @@
                         return 0;
                     }
                 }
+            return undefined;
+        }
+        static DidWin(symbols,curX,selectedX,size)
+        {
+            let DidWin = CheckWin.gameEnd(symbols,curX,selectedX,size);
+            return DidWin;
         }
     }
     export default CheckWin;

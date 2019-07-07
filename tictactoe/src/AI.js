@@ -1,5 +1,6 @@
 import CheckWin from "./CheckWin.js";
 import Grid from "./Grid.js";
+
 class AI
 {
     //will need to return curX and symbols back to the grid
@@ -14,8 +15,8 @@ class AI
                 [symbols,curX] = this.advancedAI(symbols,curX,size,playerX);
             }
         }
-        Grid.switchPlayer(symbols,curX);
-        Grid.DidWin(symbols,curX,playerX,size);
+        let won = CheckWin.DidWin(symbols,curX,playerX,size);
+        Grid.switchPlayer(symbols,curX,won);
         return;
     }
 
