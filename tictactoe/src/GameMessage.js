@@ -6,6 +6,7 @@ class GameMessage extends React.Component{
     render()
     {
         let message;
+        let messageblock=null;
         let retry;
         if(this.props.gameEnded===true)
         {
@@ -24,14 +25,14 @@ class GameMessage extends React.Component{
                 default:
                     message = "";
                     retry = "";
-
             }
+            messageblock = <div className="gameMessage">
+                        {message}
+                        {retry}
+                    </div>
         }
         return(
-            <div className="gameMessage">
-                {message}
-                {retry}
-            </div>
+            messageblock
         )
     }
 }
