@@ -71,7 +71,7 @@ class Grid extends React.Component{
         curX = !curX;
         this.xsTurn = curX;
         this.setState(({symbols: symbols}));
-        let won = CheckWin.DidWin(symbols,curX,this.props.playerX,this.props.boardSize);
+        let won = CheckWin.gameEnd(symbols,curX,this.props.playerX,this.props.boardSize);
         
         if(won===undefined)
             AI.playerAI(symbols,curX,this.props.boardSize,this.props.playerX);
@@ -93,11 +93,12 @@ class Grid extends React.Component{
         this.xsTurn = Math.floor(Math.random()*2)===0?false: true;
         AI.playerAI(symbols,this.xsTurn,this.props.boardSize,this.props.playerX);
     }
+    
     static switchPlayer(symbols,curX,won)
     {
         this.setState({symbols:symbols});
         this.xsTurn = curX;
-        
+
         if(won!==undefined)
         {
             this.gameCondition = won;

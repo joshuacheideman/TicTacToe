@@ -3,7 +3,7 @@ import Grid from "./Grid.js";
 
 class AI
 {
-    //will need to return curX and symbols back to the grid
+    //select minimax if board size is 3 otherwise pure random
     static playerAI(symbols,curX,size,playerX)
     {
         if((!curX&&playerX)||(curX&&!playerX))
@@ -15,11 +15,12 @@ class AI
                 [symbols,curX] = this.advancedAI(symbols,curX,size,playerX);
             }
         }
-        let won = CheckWin.DidWin(symbols,curX,playerX,size);
+        let won = CheckWin.gameEnd(symbols,curX,playerX,size);
         Grid.switchPlayer(symbols,curX,won);
         return;
     }
 
+    //get all the available choices and from those choices select random
     static randomAI(symbols,curX,size)
     {
         let choices;
@@ -30,6 +31,7 @@ class AI
         return [symbols,curX];
     }
 
+    //figure out how many open tiles there are
     static getRemainingTiles(symbols,size)
     {
         let choices = new Map();
@@ -55,15 +57,18 @@ class AI
         curX = !curX;
         return [symbols,curX];
     }
+
+    //checks to see if won and get heuristic from score.
     static checkHeuristic(symbols,curX,playerX,depth)
     {
         //check if some ending condition occurred return heuristic
         let heuristic = CheckWin.gameEnd(symbols,curX,playerX,3);
          //adding this to heuristic makes it so defence counters you more
-        if(((curX||!playerX)&&!curX||playerX)&&heuristic===20)
+        if((curX||!playerX)&&(!curX||playerX)&&heuristic===20)
             return heuristic+depth;
         return heuristic;
     }
+
     static minimax(depth,maxPlayer,symbols,curX,size,playerX)
     {   
         //check heuristic
@@ -87,6 +92,8 @@ class AI
                 symbols[child[1].key] = ((maxPlayer&&playerX)||(!maxPlayer&&!playerX)) ? "O" : "X";
                 
                 value = Math.max(value,this.minimax(depth-1,false,symbols,!curX,size,playerX)[0])
+                
+                //get the keypair for the maximum tile and return it up the stack.
                 if(max<value){
                     max = value;
                     childkey = child[1].key;
