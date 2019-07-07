@@ -4,7 +4,7 @@ import Grid from "./Grid.js";
 class AI
 {
     //will need to return curX and symbols back to the grid
-    static playerAI(symbols,curX,size,playerX,switchPlayer)
+    static playerAI(symbols,curX,size,playerX)
     {
         if((!curX&&playerX)||(curX&&!playerX))
         {
@@ -49,36 +49,28 @@ class AI
         let choices = {};
         choices = this.getRemainingTiles(symbols,size);
         node.children = choices;
-        let value= -Infinity;
-        let max = -Infinity;
-        let choosenTile; 
-        for (let child of node.children)
-        {
-            value = Math.max(value,this.minimax(child[1],choices.size-1,false,symbols,curX,size,playerX));
-            if(value>max)
-            {
-                max = value;
-                choosenTile = child[1];
-            }
-        }
-        symbols[choosenTile.key] = (curX) ? "X": "O";
+
+        let [,choosenKey] = this.minimax(choices.size,true,symbols,curX,size,playerX);
+        symbols[choosenKey] = (curX) ? "X": "O";
         curX = !curX;
         return [symbols,curX];
     }
-    static minimax(curNode,depth,maxPlayer,symbols,curX,size,playerX)
+    static checkHeuristic(symbols,curX,playerX,depth)
     {
-        symbols[curNode.key] = ((maxPlayer&&playerX)||(!maxPlayer&&!playerX)) ? "O" : "X";
-        
         //check if some ending condition occurred return heuristic
         let heuristic = CheckWin.gameEnd(symbols,curX,playerX,3);
+         //adding this to heuristic makes it so defence counters you more
+        if(((curX||!playerX)&&!curX||playerX)&&heuristic===20)
+            return heuristic+depth;
+        return heuristic;
+    }
+    static minimax(depth,maxPlayer,symbols,curX,size,playerX)
+    {   
+        //check heuristic
+        let heuristic = this.checkHeuristic(symbols,!curX,playerX,depth);
         if(heuristic!==undefined)
         {
-            symbols[curNode.key]=undefined;
-
-            //adding this to heuristic makes it so defence counters you more
-            if(!maxPlayer&&heuristic===20)
-                return heuristic+depth;
-            return heuristic;
+            return [heuristic];
         }
         let node = {};
         let choices = {};
@@ -88,19 +80,33 @@ class AI
         if(maxPlayer)
         {
             value = -Infinity;
+            let max = -Infinity;
+            let childkey;
             for (let child of node.children)
             {
-                value = Math.max(value,this.minimax(child[1],depth-1,false,symbols,!curX,size,playerX))
+                symbols[child[1].key] = ((maxPlayer&&playerX)||(!maxPlayer&&!playerX)) ? "O" : "X";
+                
+                value = Math.max(value,this.minimax(depth-1,false,symbols,!curX,size,playerX)[0])
+                if(max<value){
+                    max = value;
+                    childkey = child[1].key;
+                }
+                symbols[child[1].key] = undefined;
             }
+            return [value,childkey];
         }else{
             value = Infinity;
             for (let child of node.children)
             {
-                value = Math.min(value,this.minimax(child[1],depth-1,true,symbols,!curX,size,playerX))
+                symbols[child[1].key] = ((maxPlayer&&playerX)||(!maxPlayer&&!playerX)) ? "O" : "X";
+
+                value = Math.min(value,this.minimax(depth-1,true,symbols,!curX,size,playerX)[0]);
+
+                symbols[child[1].key] = undefined;
+
             }
+            return [value];
         }
-        symbols[curNode.key]=undefined;
-        return value;
     }
 }
 export default AI;
