@@ -9,33 +9,35 @@ class Grid extends React.Component{
     {
         super(props);
         this.state = {
-            size: this.props.boardSize,
             symbols: new Array(Math.pow(this.props.boardSize,2)),
-            xsTurn: Math.floor(Math.random()*2)===0?false: true,
-            selectedX : this.props.playerX,
-            gameEnded: false,
-            gameCondition: undefined,
-            AI: this.props.AI
+            gameEnded: false
         };
+
+        //tells if you won,lost, or tied
+        this.gameCondition = undefined;
+        
+        //tells us if x is current turn
+        this.xsTurn = Math.floor(Math.random()*2)===0?false: true;
+
         //bind to the component so state is not null in function
         this.setSymbol = this.setSymbol.bind(this);
         this.resetGrid = this.resetGrid.bind(this);
     }
     componentDidMount()
     {
-        this.playerAI(this.state.symbols,this.state.xsTurn);
+        this.playerAI(this.state.symbols,this.xsTurn);
     }
     //This function programatically makes the table for us instead of hard coding it
     makeGrid()
     {
         let table = [];
         let counter = 0;
-        for(let i=0;i<this.state.size;i++)
+        for(let i=0;i<this.props.boardSize;i++)
         {
             //inner loop to create children elements
             let children = [];
 
-            for(let j=0;j<this.state.size;j++)
+            for(let j=0;j<this.props.boardSize;j++)
             {
                 children.push(<Cell 
                     key = {"Cell-"+counter} 
@@ -43,7 +45,7 @@ class Grid extends React.Component{
                     setSymbol={this.setSymbol} 
                     position= {counter} 
                     gameEnded= {this.state.gameEnded}
-                    size = {this.state.size}
+                    size = {this.props.boardSize}
                     >
                 </Cell>)
                 counter++;
@@ -58,15 +60,16 @@ class Grid extends React.Component{
     setSymbol(cellId,e)
     {
         let symbols = this.state.symbols;
-        let curX = this.state.xsTurn;
+        let curX = this.xsTurn;
         if(curX===true)
             symbols[cellId] = "X";
         else
             symbols[cellId] = "O";
         
         curX = !curX;
-        this.setState((state)=> ({symbols: symbols,xsTurn: curX}));
-        let won = this.DidWin(symbols,curX,this.state.selectedX,this.state.size);
+        this.xsTurn = curX;
+        this.setState(({symbols: symbols}));
+        let won = this.DidWin(symbols,curX,this.props.playerX,this.props.boardSize);
         
         if(won===undefined)
             this.playerAI(symbols,curX);
@@ -78,24 +81,26 @@ class Grid extends React.Component{
         //if we won end, the game and put the code in for game end state 
         if(DidWin!==undefined)
         {
-            this.setState({gameEnded: true,gameCondition:DidWin});
+            this.setState({gameEnded: true});
+            this.gameCondition = DidWin;
         }
         return DidWin;
     }
     
     playerAI(symbols,curX)
     {
-        if((this.state.AI&&(!curX&&this.state.selectedX))||(this.state.AI&&(curX&&!this.state.selectedX)))
+        if((!curX&&this.props.playerX)||(curX&&!this.props.playerX))
         {
-           if(this.state.size!==3)
+           if(this.props.boardSize!==3)
                 [symbols,curX] = this.randomAI(symbols,curX);
             else
             {
                 [symbols,curX] = this.advancedAI(symbols,curX);
             }
         }
-        this.setState({symbols: symbols,xsTurn: curX});
-        this.DidWin(symbols,curX,this.state.selectedX,this.state.size);
+        this.setState({symbols: symbols});
+        this.xsTurn = curX;
+        this.DidWin(symbols,curX,this.props.playerX,this.props.boardSize);
         return;
     }
     randomAI(symbols,curX)
@@ -110,7 +115,7 @@ class Grid extends React.Component{
     getRemainingTiles(symbols)
     {
         let choices = new Map();
-        for(let i=0;i<Math.pow(this.state.size,2);i++)
+        for(let i=0;i<Math.pow(this.props.boardSize,2);i++)
         {
             if(symbols[i]!=='X'&&symbols[i]!=='O')
             {
@@ -143,10 +148,10 @@ class Grid extends React.Component{
     }
     minimax(curNode,depth,maxPlayer,symbols,curX)
     {
-        symbols[curNode.key] = ((maxPlayer&&this.state.selectedX)||(!maxPlayer&&!this.state.selectedX)) ? "O" : "X";
+        symbols[curNode.key] = ((maxPlayer&&this.props.playerX)||(!maxPlayer&&!this.props.playerX)) ? "O" : "X";
         
         //check if depth is 0 or if some ending condition occurred return heuristic
-        let heuristic = CheckWin.gameEnd(symbols,curX,this.state.selectedX,this.state.size);
+        let heuristic = CheckWin.gameEnd(symbols,curX,this.props.playerX,this.props.boardSize);
         if(heuristic!==undefined)
         {
             symbols[curNode.key]=undefined;
@@ -180,15 +185,14 @@ class Grid extends React.Component{
     }
     resetGrid()
     {
-        let symbols = new Array(this.state.size);
-        let xsTurn = Math.floor(Math.random()*2)===0?false: true;
+        let symbols = new Array(this.props.boardSize);
         this.setState({
             symbols: symbols,
-            xsTurn: xsTurn,
-            gameEnded: false,
-            gameCondition: undefined
+            gameEnded: false
         });
-        this.playerAI(symbols,xsTurn);
+        this.gameCondition = undefined;
+        this.xsTurn = Math.floor(Math.random()*2)===0?false: true;
+        this.playerAI(symbols,this.xsTurn);
     }
     render()
     {
@@ -201,7 +205,7 @@ class Grid extends React.Component{
         </table>
         <GameMessage 
             gameEnded={this.state.gameEnded} 
-            gameCondition={this.state.gameCondition} 
+            gameCondition={this.gameCondition} 
             resetGrid = {this.resetGrid}></GameMessage>
     </main>
         )
